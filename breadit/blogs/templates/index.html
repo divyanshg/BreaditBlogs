@@ -1,0 +1,14 @@
+{% extends "_base.html" %}
+
+{% block content %}
+<div class="h-screen container mx-auto">
+    {% include "sections/featured.html" %}
+    {% include "sections/categories.html" %}
+    {% include "sections/latest.html" %}
+    <!-- <div class="max-h-[300px] w-full flex flex-wrap space-x-3">
+        {%include "components/card.html"%}
+        {%include "components/card.html"%}
+        {%include "components/card.html"%}
+    </div> -->
+</div>
+{% endblock content %}

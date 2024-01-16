@@ -1,0 +1,12 @@
+{% if categories %}
+<div class="flex flex-col border-t-2 border-gray-200 pt-4 mb-4">
+    <div class="w-full px-4 py-2 mb-2">
+        <span class="text-4xl font-bold">Categories</span>
+    </div>
+    <div class="flex flex-row space-x-8 p-4">
+        {% for category in categories %}
+        {% include "components/category.html" with name=category %}
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
