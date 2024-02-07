@@ -1,13 +1,71 @@
 {% extends "_base.html" %}
 
 {% block content %}
+<title>
+    {{ blog.title }}
+</title>
 <div class="flex flex-col min-h-screen container mx-auto pt-[60px] space-y-4">
+    <div class="flex flex-row space-x-2">
+        <span>
+            {{ blog.views }} views
+        </span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-dot text-gray-400">
+            <circle cx="12.1" cy="12.1" r="1" />
+        </svg>
+        <span>
+            <span id="likesCount">{{ blog.likesCount }}</span> hearts
+        </span>
+    </div>
     <h2 class="text-6xl font-semibold mb-8">{{blog.title}}</h2>
-    <img src="https://i.pinimg.com/originals/d5/e2/cd/d5e2cd039bb01227d2c8e4189c274485.jpg" alt="" class="rounded-2xl h-[600px]" />
+    {% load static %}
+    <img src="{% static blog.thumbnail %}" alt="" class="rounded-2xl h-[600px]" />
     <div>
         <article id="content">
             {{blog.content|safe}}
         </article>
     </div>
+    {% if isAuthenticated %}
+    <a href="/likeBlog?blog_id={{ blog.slug  }}"
+        class="fixed right-10 bottom-10 rounded-full shadow-xl p-4 animate-bounce	cursor-pointer bg-black group hover:bg-rose-400 transition-colors"
+        title="Like this blog">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="lucide lucide-heart group-hover:text-white">
+            <path
+                d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        </svg>
+    </a>
+    <div>
+        <h1 class="text-xl font-semibold">
+            Comments ({{ blog.commentCount }})
+        </h1>
+        <form action="{% url 'addComment' %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="blog_id" value="{{ blog.slug }}" />
+            <textarea name="comment" id="comment" cols="30" rows="6"
+                class="w-full border border-gray-200 my-2 rounded-lg"></textarea>
+            <input type="submit" value="Post Comment" class="bg-black text-white p-2 rounded-md cursor-pointer"
+                id="commentSubmit" />
+        </form>
+        <div class="my-4">
+            {% if comments %}
+            <ul>
+                {% for comment in comments %}
+                <li class="my-2 border border-gray-200 px-4 rounded-lg py-2">
+                    <div class="flex flex-row space-x-2">
+                        <span class="font-semibold">{{ comment.user.username }}</span>
+                        <span>{{ comment.comment }}</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No comments yet</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}

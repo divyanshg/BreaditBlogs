@@ -26,8 +26,11 @@ class Blog(models.Model):
     pub_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category)
-    thumbnail = models.ImageField(upload_to='images', default='images/default.png')
+    thumbnail = models.ImageField(upload_to='images', default='media/images/default.png')
     isFeatured = models.BooleanField(default=False)
+    likesCount = models.IntegerField(default=0)
+    views = models.IntegerField(default=0)
+    commentCount = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -38,3 +41,19 @@ class Subscription(models.Model):
 
     def __str__(self):
         return self.email
+
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + " likes " + self.blog.title
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
+    comment = models.TextField()
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + " commented on " + self.blog.title

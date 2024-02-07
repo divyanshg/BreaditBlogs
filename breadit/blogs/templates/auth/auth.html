@@ -13,32 +13,17 @@
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <title>Breadit</title>
-
     <style>
         * {
             font-family: "Open Sans", sans-serif;
             font-optical-sizing: auto;
         }
     </style>
-    <style>
-        .grad {
-            background: hsla(17, 95%, 50%, 1);
-
-            background: linear-gradient(90deg, hsla(17, 95%, 50%, 1) 0%, hsla(42, 94%, 57%, 1) 100%);
-
-            background: -moz-linear-gradient(90deg, hsla(17, 95%, 50%, 1) 0%, hsla(42, 94%, 57%, 1) 100%);
-
-            background: -webkit-linear-gradient(90deg, hsla(17, 95%, 50%, 1) 0%, hsla(42, 94%, 57%, 1) 100%);
-
-            filter: progid: DXImageTransform.Microsoft.gradient(startColorstr="#F74C06", endColorstr="#F9BC2C", GradientType=1);
-        }
-    </style>
+    <title>Breadit</title>
 </head>
 
 <body class="bg-white">
-    {% include "sections/header.html" with isAuthenticated="false" %}
-    <div class="mx-auto mt-[82px] pt-[24px]">
+    <div class="mx-auto">
         {% block content %}
 
         {% endblock content %}
