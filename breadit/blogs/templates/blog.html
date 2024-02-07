@@ -20,7 +20,7 @@
     </div>
     <h2 class="text-6xl font-semibold mb-8">{{blog.title}}</h2>
     {% load static %}
-    <img src="{% static blog.thumbnail %}" alt="" class="rounded-2xl h-[600px]" />
+    <img src="{{ blog.thumbnail }}" alt="" class="rounded-2xl h-[600px]" />
     <div>
         <article id="content">
             {{blog.content|safe}}
