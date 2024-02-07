@@ -1,11 +1,7 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .models import Category, Blog, Subscription, User, Comment
-
-def isAuthenticated(request):
-    if 'user' in request.session:
-        return True
-    else:
-        return False
 
 # Create your views here.
 def index(request):
@@ -18,8 +14,7 @@ def index(request):
     data = {
         "categories": categories,
         "latest_posts":  latest_posts,
-        "featured_posts": featured_posts,
-        "isAuthenticated": isAuthenticated(request)
+        "featured_posts": featured_posts
     }
 
     #Renderig template and Sending data to template
@@ -35,7 +30,6 @@ def blog_detail(request, blog_id):
     #Preparing data to be sent to template
     data = {
         "blog": blog,
-        "isAuthenticated": isAuthenticated(request),
         "comments": comments
     }
 
@@ -102,8 +96,7 @@ def category(request):
 
     if(category == None):
         return render(request, 'category.html', {
-            "error": "Please select a category.",
-        "isAuthenticated": isAuthenticated(request)
+            "error": "Please select a category."
         })
 
     blogs = Blog.objects.filter(category__name=category)
@@ -111,13 +104,11 @@ def category(request):
 
     return render(request, 'category.html', {
         "blogs": blogs,
-        "category": category,
-        "isAuthenticated": isAuthenticated(request)
+        "category": category
     })
 
+@login_required(login_url='/auth/login/')
 def likeBlog(request):
-    if not isAuthenticated(request):
-        return redirect('/auth/login')
 
     blog_id = request.GET.get('blog_id')
     blog = Blog.objects.get(slug=blog_id)
@@ -130,27 +121,23 @@ def likeBlog(request):
 
 #auth views
 def login(request):
-    if isAuthenticated(request):
-        return redirect('/')
-    
     if request.method == "GET":
         return render(request, 'auth/login.html')
     else:
         email = request.POST.get('email')
         password = request.POST.get('password')
-
-        try:
-            user = User.objects.get(email=email, password=password)
-            request.session['user'] = user.email
-            return redirect('/')
-        except:
+        print(email, password)
+        user = authenticate(request, username=email, password=password)
+        print(user)
+        if user is None:
             return render(request, 'auth/login.html', {
                 "error": "Invalid email or password."
             })
+        else:
+            login(request, user)
+            return redirect('/')
 
 def register(request):
-    if isAuthenticated(request):
-        return redirect('/')
 
     if request.method == "GET":
         return render(request, 'auth/register.html')
@@ -160,21 +147,21 @@ def register(request):
         
         #check if email already exists
         try:
-            User.objects.get(email=email)
+            User.objects.get(username=email)
             return render(request, 'auth/register.html', {
                 "error": "Email already exists."
             })
         except:
             pass
 
-        user = User(email=email, password=password)
+        user = User.objects.create_user(username=email, email=email, password=password)
         user.save()
+        login(request, user)
 
-        return render(request, 'auth/register.html')
+        return redirect('/')
 
+@login_required(login_url='/auth/login/')
 def addComment(request):
-    if not isAuthenticated(request):
-        return redirect('/auth/login')
 
     if request.method == "POST":
         blog_id = request.POST.get('blog_id')
@@ -193,9 +180,8 @@ def addComment(request):
     else:
         return redirect(request.META.get('HTTP_REFERER'))
 
+@login_required(login_url='/auth/login/')
 def deleteComment(request):
-    if not isAuthenticated(request):
-        return redirect('/auth/login')
 
     if request.method == "POST":
         comment_id = request.POST.get('comment_id')
@@ -205,9 +191,8 @@ def deleteComment(request):
     else:
         return redirect(request.META.get('HTTP_REFERER'))
 
+@login_required(login_url='/auth/login/')
 def editComment(request):
-    if not isAuthenticated(request):
-        return redirect('/auth/login')
         
     if request.method == "POST":
         comment_id = request.POST.get('comment_id')
@@ -218,6 +203,7 @@ def editComment(request):
     else:
         return redirect(request.META.get('HTTP_REFERER'))
 
+@login_required(login_url='/auth/login/')
 def logout(request):
-    del request.session['user']
+    logout(request)
     return redirect('/')
