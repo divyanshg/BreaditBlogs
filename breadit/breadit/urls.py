@@ -25,6 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path("blog/<str:blog_id>/", views.blog_detail, name="blog_detail"),
+    path("contact/", views.contact, name="contact"),
+    path("newsletter/", views.newsletter, name="newsletter"),
+    path("new-blog/", views.addBlog, name="newBlog"),
 ]
 
 if settings.DEBUG:

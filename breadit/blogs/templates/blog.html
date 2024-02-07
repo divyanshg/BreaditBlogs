@@ -5,9 +5,9 @@
     <h2 class="text-6xl font-semibold mb-8">{{blog.title}}</h2>
     <img src="https://i.pinimg.com/originals/d5/e2/cd/d5e2cd039bb01227d2c8e4189c274485.jpg" alt="" class="rounded-2xl h-[600px]" />
     <div>
-        <p class="text-lg leading-relaxed" id="content">
-            {{blog.content}}
-        </p>
+        <article id="content">
+            {{blog.content|safe}}
+        </article>
     </div>
 </div>
 {% endblock content %}
