@@ -20,13 +20,13 @@
     </div>
     <h2 class="text-6xl font-semibold mb-8">{{blog.title}}</h2>
     {% load static %}
-    <img src="{{ blog.thumbnail }}" alt="" class="rounded-2xl h-[600px]" />
+    <img src="{{ blog.thumbnail.url }}" alt="" class="rounded-2xl h-[600px]" />
     <div>
         <article id="content">
             {{blog.content|safe}}
         </article>
     </div>
-    {% if isAuthenticated %}
+    {% if user.is_authenticated %}
     <a href="/likeBlog?blog_id={{ blog.slug  }}"
         class="fixed right-10 bottom-10 rounded-full shadow-xl p-4 animate-bounce	cursor-pointer bg-black group hover:bg-rose-400 transition-colors"
         title="Like this blog">
@@ -37,10 +37,14 @@
                 d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
     </a>
+    {% endif %}
+
     <div>
         <h1 class="text-xl font-semibold">
             Comments ({{ blog.commentCount }})
         </h1>
+        {% if user.is_authenticated %}
+
         <form action="{% url 'addComment' %}" method="post">
             {% csrf_token %}
             <input type="hidden" name="blog_id" value="{{ blog.slug }}" />
@@ -49,13 +53,14 @@
             <input type="submit" value="Post Comment" class="bg-black text-white p-2 rounded-md cursor-pointer"
                 id="commentSubmit" />
         </form>
+        {% endif %}
         <div class="my-4">
             {% if comments %}
             <ul>
                 {% for comment in comments %}
                 <li class="my-2 border border-gray-200 px-4 rounded-lg py-2">
                     <div class="flex flex-row space-x-2">
-                        <span class="font-semibold">{{ comment.user.username }}</span>
+                        <span class="font-semibold">{{ comment.user.email }}</span>
                         <span>{{ comment.comment }}</span>
                     </div>
                 </li>
@@ -66,6 +71,5 @@
             {% endif %}
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock content %}

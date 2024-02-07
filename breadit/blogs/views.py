@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as _login, logout as _logout
 from django.contrib.auth.decorators import login_required
-from .models import Category, Blog, Subscription, User, Comment
+from .models import Category, Blog, Subscription, Comment
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
@@ -126,15 +127,15 @@ def login(request):
     else:
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(email, password)
+        
         user = authenticate(request, username=email, password=password)
-        print(user)
+        
         if user is None:
             return render(request, 'auth/login.html', {
                 "error": "Invalid email or password."
             })
         else:
-            login(request, user)
+            _login(request, user)
             return redirect('/')
 
 def register(request):
@@ -156,7 +157,7 @@ def register(request):
 
         user = User.objects.create_user(username=email, email=email, password=password)
         user.save()
-        login(request, user)
+        _login(request, user)
 
         return redirect('/')
 
@@ -168,7 +169,7 @@ def addComment(request):
         comment = request.POST.get('comment')
 
         blog = Blog.objects.get(slug=blog_id)
-        user = User.objects.get(email=request.session['user'])
+        user = request.user
 
         comment = Comment(user=user, blog=blog, comment=comment)
         comment.save()
@@ -205,5 +206,5 @@ def editComment(request):
 
 @login_required(login_url='/auth/login/')
 def logout(request):
-    logout(request)
-    return redirect('/')
+    _logout(request)
+    return redirect('/auth/login')
